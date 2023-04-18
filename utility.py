@@ -64,6 +64,61 @@ def create_checker(
     
     return stim
 
+
+# Function to create rotating checkerboard stimulus (space 1D, time 1D)
+def create_rotating_checker(
+        contrast=1,
+        resolution=5, # degrees
+        x_extent=360, # degrees
+        t_extent=8, # seconds
+        on_off_t=(1,6), # seconds
+        dx=1, # degrees
+        dt=0.01, # seconds
+        dxdt=0 # in degrees per second
+    ):
+    
+    # we assume dx to cleanly divide resolution
+    if np.mod(resolution, dx) != 0:
+        print('dx should clearnly divide resolution!')
+        return 0
+    
+    # Calculate the numbers of the samples
+    n_samples_x = int(np.ceil(x_extent / dx))
+    n_samples_t = int(np.ceil(t_extent / dt))
+    
+    # Create the mesh 
+    x_vec = np.linspace(0, x_extent, n_samples_x, endpoint=False)
+    t_vec = np.linspace(0, t_extent, n_samples_t, endpoint=False)
+    x_mat, t_mat = np.meshgrid(x_vec, t_vec)
+    
+    # Preapre stimulus related variables
+    n_checker = int(np.ceil(x_extent/resolution))
+    checker_resize_ratio = int(resolution/dx)
+    
+    stim = []
+    
+    n_t_samples_pre = np.sum(t_vec<on_off_t[0])
+    n_t_samples_post = np.sum(t_vec>on_off_t[1])
+    n_t_updates = n_samples_t - n_t_samples_pre - n_t_samples_post
+    
+    # pre stimulus grey period
+    stim.append(np.zeros((n_t_samples_pre,n_samples_x)))
+    
+    checker_lowres = np.random.randint(2, size=n_checker).astype('float') * 2 - 1
+    checker_highres = np.kron(checker_lowres,np.ones((1,checker_resize_ratio)))[:n_samples_x]
+    # add checkers
+    for i in range(n_t_updates-1):        
+        n_pixel_shift = np.round(float(i) * dt * dxdt / dx).astype(int)
+        stim.append(np.roll(checker_highres, n_pixel_shift, axis=1))
+    
+    # post stimulus grey period
+    stim.append(np.zeros((n_t_samples_post,n_samples_x)))
+    
+    # turn into 2darray
+    stim = np.vstack(stim)* contrast
+    
+    return stim
+
 # Function to simulate photoreceptor responses & implement downsampling
 # convolve gaussian over space, downsample
 

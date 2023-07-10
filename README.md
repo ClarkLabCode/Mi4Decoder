@@ -10,5 +10,5 @@ neurons, whose mean activity can signal the presence of stationary patterns.
 - matplotlib
 
 ## References
-[Arenz et al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28343964/) for Mi4 receptive field property.
-[Stavenga (2003)](https://pubmed.ncbi.nlm.nih.gov/12664095/) for Drosophila photoreceptor receptive angles.
+- [Arenz et al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28343964/) for Mi4 receptive field property.
+- [Stavenga (2003)](https://pubmed.ncbi.nlm.nih.gov/12664095/) for Drosophila photoreceptor receptive angles.
